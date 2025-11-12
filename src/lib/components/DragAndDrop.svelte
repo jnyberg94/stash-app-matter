@@ -1,7 +1,6 @@
 <script>
 	import { onMount } from 'svelte';
 	import { getCurrentWebview } from '@tauri-apps/api/webview';
-	import { invoke } from '@tauri-apps/api/core';
 	import { FileArrowUp } from 'phosphor-svelte';
 	import Icon from '$lib/components/Icon.svelte';
 
@@ -36,7 +35,6 @@
 
 						// Focus the window after drop
 						try {
-							await invoke('focus_window');
 							console.log('webview focus set')
 						} catch (error) {
 							console.error('Failed to focus window:', error);
@@ -87,7 +85,6 @@
 		try {
 			console.log('Loading image from path:', path);
 			// Read the file using Tauri's fs API
-			const imageBuffer = await invoke('read_file', { path });
 
 			// Create a blob URL for preview
 			const blob = new Blob([new Uint8Array(imageBuffer)]);

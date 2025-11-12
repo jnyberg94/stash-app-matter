@@ -1,5 +1,4 @@
 <script>
-	import { convertFileSrc, invoke } from '@tauri-apps/api/core';
 	import { searchImagesWithImage } from '../inference/searchImages';
 	import { writeImage } from '@tauri-apps/plugin-clipboard-manager';
 	import { readFile, remove } from '@tauri-apps/plugin-fs';
@@ -70,7 +69,6 @@
 
 	async function copyImage() {
 		try {
-			await invoke('copy_image_to_clipboard', { path: sidebarData.imagePath });
 			console.log('Image copied to clipboard');
 		} catch (error) {
 			console.error('Failed to copy image:', error);
@@ -80,7 +78,6 @@
 
 	async function revealInFinder() {
 		try {
-			await invoke('show_in_folder', { path: sidebarData.imagePath });
 		} catch (error) {
 			console.error('Failed to reveal in finder:', error);
 			alert(`Failed to reveal in finder: ${error}`);

@@ -1,4 +1,4 @@
-import { invoke } from '@tauri-apps/api/core';
+
 import { writable, get } from 'svelte/store';
 
 
@@ -12,7 +12,6 @@ export const config = writable({
 // Load config from Rust backend
 export async function loadConfig() {
   try {
-    const cfg = await invoke('get_config');
     config.set(cfg);
   } catch (error) {
     console.error('Failed to load config:', error);
@@ -22,11 +21,7 @@ export async function loadConfig() {
 // Update specific config values
 export async function updateConfig(updates) {
   try {
-    await invoke('update_config', {
-      quickSaveSide: updates.quick_save_side,
-      theme: updates.theme,
-      tags: updates.tags
-    });
+
     
     // Update local store
     config.update(c => ({
