@@ -8,7 +8,6 @@
 	import {
 		Gear,
 		DotsThreeVertical,
-		ArrowUp,
 		Plus,
 		MagnifyingGlass,
 		X,
@@ -143,8 +142,13 @@
 		{/if}
 	</div> -->
 	<div class="flex-horiz gap-md">
-		<button class="flex-horiz gap-sm filter">
-			<Icon icon={ArrowUp} variant="grey" size="md" />
+		<button class="flex-horiz gap-sm filter" onclick={() => dashboard.toggleSortOrder()}>
+			<img 
+				src="/icons/arrow-up.svg" 
+				alt="Sort" 
+				class="arrow-icon"
+				class:rotate={$dashboard.sortOrder === 'oldest'}
+			/>
 			<h3>Date</h3>
 		</button>
 	</div>
@@ -271,6 +275,22 @@
 		border: var(--border-thin);
 		border-radius: var(--border-sm);
 		padding: 4px 6px;
+		cursor: pointer;
+		transition: background-color 0.2s;
+	}
+
+	.filter:hover {
+		background-color: var(--bg-base);
+	}
+
+	.arrow-icon {
+		width: 18px;
+		height: 18px;
+		transition: transform 0.3s ease;
+	}
+
+	.arrow-icon.rotate {
+		transform: rotate(180deg);
 	}
 
 	.settings-cont {
