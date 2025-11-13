@@ -89,10 +89,11 @@ function createDashboardStore() {
     const { subscribe, set, update } = writable({
         periods: [],
         allImageCount: 0,
-        loading: true
+        loading: true,
+        sortOrder: 'newest' // 'newest' or 'oldest'
     });
 
-    async function loadImages() {
+    async function loadImages(sortOrder = 'newest') {
         try {
             const entries = await readDir('images', {
                 baseDir: BaseDirectory.AppData 
@@ -110,13 +111,13 @@ function createDashboardStore() {
                 }));
 
             const richData = await enrichResults(imageFiles);
-            const periods = sortImagesByTimePeriod(richData);
+            const periods = sortImagesByTimePeriod(richData, sortOrder);
             const allImageCount = richData.length;
 
-            set({ periods, allImageCount, loading: false });
+            set({ periods, allImageCount, loading: false, sortOrder });
         } catch (error) {
             console.error('Error loading images:', error);
-            set({ periods: [], allImageCount: 0, loading: false });
+            set({ periods: [], allImageCount: 0, loading: false, sortOrder });
         }
     }
 
@@ -142,15 +143,24 @@ function createDashboardStore() {
         await loadImages();
     }
 
+    function toggleSortOrder() {
+        update(state => {
+            const newSortOrder = state.sortOrder === 'newest' ? 'oldest' : 'newest';
+            loadImages(newSortOrder);
+            return state;
+        });
+    }
+
     return {
         subscribe,
         loadImages,
         deleteImage,
-        refresh
+        refresh,
+        toggleSortOrder
     };
 }
 
-function sortImagesByTimePeriod(images) {
+function sortImagesByTimePeriod(images, sortOrder = 'newest') {
     const now = new Date();
     const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
     const sevenDaysAgo = new Date(today);
@@ -180,7 +190,11 @@ function sortImagesByTimePeriod(images) {
     });
 
     periods.forEach(period => {
-        period.items.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+        if (sortOrder === 'newest') {
+            period.items.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+        } else {
+            period.items.sort((a, b) => new Date(a.created_at) - new Date(b.created_at));
+        }
     });
 
     return periods.filter(period => period.items.length > 0);
